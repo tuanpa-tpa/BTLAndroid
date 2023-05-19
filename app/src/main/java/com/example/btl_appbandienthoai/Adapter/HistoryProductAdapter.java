@@ -77,6 +77,24 @@ public class HistoryProductAdapter extends RecyclerView.Adapter<HistoryProductAd
                 home.toOrderInfoFragment(orderInfo);
             }
         });
+        holder.imgHitoryProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Xử lý khi người dùng click vào hình ảnh
+                for (Order order : listOrder) {
+                    if (order.getOrderNo().equals(detailOrder.getOrderNo())) {
+                        orderInfo = order;
+                        break;
+                    }
+                }
+                for (DetailOrder itemDetailOrder : listDetailOrder) {
+                    if (detailOrder.getOrderNo().equals(itemDetailOrder.getOrderNo())) {
+                        orderInfo.addToListDetailOrder(itemDetailOrder);
+                    }
+                }
+                home.toOrderInfoFragment(orderInfo);
+            }
+        });
     }
 
     @Override
