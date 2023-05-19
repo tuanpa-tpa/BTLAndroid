@@ -277,4 +277,48 @@ public class Home extends AppCompatActivity {
         return mListProduct;
     }
 
+    private void deleteProduct(String productId) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("DbProduct");
+
+        // Xoá dữ liệu theo ID
+        myRef.child(productId).removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    // Xoá dữ liệu thành công
+                    Log.d("Firebase", "Xoá dữ liệu thành công cho sản phẩm có ID: " + productId);
+                })
+                .addOnFailureListener(e -> {
+                    // Xoá dữ liệu thất bại
+                    Log.e("Firebase", "Xoá dữ liệu thất bại cho sản phẩm có ID: " + productId + ". Lỗi: " + e.getMessage());
+                });
+    }
+
+    private void updateProduct() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("DbProduct");
+
+        List<Product> productList = new ArrayList<>();
+
+        Product product1 = new Product();
+        product1.setId("product1");
+        product1.setProductName("iPhone 14 Pro Max 256GB");
+        product1.setUrlImg("https://img.tgdd.vn/imgt/f_webp,fit_outside,quality_100/https://cdn.tgdd.vn/Products/Images/42/289700/iphone-14-pro-max-den-thumb-600x600.jpg");
+        product1.setBrand("Apple");
+        product1.setProductPrice(29790000);
+        product1.setDescription("iPhone 14 Pro Max một siêu phẩm trong giới smartphone được nhà Táo tung ra thị trường vào tháng 09/2022. Máy trang bị con chip Apple A16 Bionic vô cùng mạnh mẽ, đi kèm theo đó là thiết kế hình màn hình mới, hứa hẹn mang lại những trải nghiệm đầy mới mẻ cho người dùng iPhone.");
+        productList.add(product1);
+
+        for (Product product : productList) {
+            String productId = product.getId();
+            myRef.child(productId).setValue(product)
+                    .addOnSuccessListener(aVoid -> {
+                        // Cập nhật dữ liệu thành công
+                        Log.d("Firebase", "Cập nhật dữ liệu thành công cho sản phẩm có ID: " + productId);
+                    })
+                    .addOnFailureListener(e -> {
+                        // Cập nhật dữ liệu thất bại
+                        Log.e("Firebase", "Cập nhật dữ liệu thất bại cho sản phẩm có ID: " + productId + ". Lỗi: " + e.getMessage());
+                    });
+        }
+    }
 }
