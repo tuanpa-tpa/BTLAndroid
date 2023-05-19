@@ -28,6 +28,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HistoryFragment extends Fragment {
 
@@ -93,9 +95,18 @@ public class HistoryFragment extends Fragment {
         // Kết nối tới data base
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("DbOrder");
+        String phone = edtHistoryPhone.getText().toString();
+        String phoneRegex = "^0\\d{9}$";
+        Pattern phonePattern = Pattern.compile(phoneRegex);
+        Matcher phoneMatcher = phonePattern.matcher(phone);
+
+        if (phone.isEmpty() || !phoneMatcher.matches()) {
+            Toast.makeText(getContext(), "Số điện thoại nhập không hợp lệ", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Lấy thông tin order
-        myRef.orderByChild("custPhone").equalTo(edtHistoryPhone.getText().toString())
+        myRef.orderByChild("custPhone").equalTo(phone)
                 .addValueEventListener(new ValueEventListener() {
 
                     @Override

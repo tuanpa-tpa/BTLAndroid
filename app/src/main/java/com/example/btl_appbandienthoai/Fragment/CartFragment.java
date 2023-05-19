@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CartFragment extends Fragment {
 
@@ -119,26 +121,50 @@ public class CartFragment extends Fragment {
     }
     // Thêm dữ liệu các thông tin đã order
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void addDataOrder(){
+    private void addDataOrder() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("DbOrder");
 
-        Map<String,Object> map = new HashMap<>();
+        // Kiểm tra và lấy giá trị từ các trường nhập liệu
+        String custName = edtCartCustName.getText().toString();
+        String custAddress = edtCartCustAddress.getText().toString();
+        String custPhone = edtCartCustPhone.getText().toString();
+
+        if (custName.isEmpty()) {
+            Toast.makeText(getContext(), "Vui lòng nhập tên khách hàng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (custAddress.isEmpty()) {
+            Toast.makeText(getContext(), "Vui lòng nhập địa chỉ khách hàng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String phoneRegex = "^0\\d{9}$";
+        Pattern phonePattern = Pattern.compile(phoneRegex);
+        Matcher phoneMatcher = phonePattern.matcher(custPhone);
+
+        if (custPhone.isEmpty() || !phoneMatcher.matches()) {
+            Toast.makeText(getContext(), "Số điện thoại nhập không hợp lệ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Tạo map chứa thông tin đơn hàng
+        Map<String, Object> map = new HashMap<>();
 
         // Lấy ngày order = now
         Date date = new Date(System.currentTimeMillis());
         map.put("dateOrder", date.toString());
-        map.put("custName",edtCartCustName.getText().toString());
-        map.put("custAddress",edtCartCustAddress.getText().toString());
-        map.put("custPhone",edtCartCustPhone.getText().toString());
+        map.put("custName", custName);
+        map.put("custAddress", custAddress);
+        map.put("custPhone", custPhone);
 
         int num = 0;
-        for (Product product : listCartProduct){
-            num = num + product.getNumProduct();
+        for (Product product : listCartProduct) {
+            num += product.getNumProduct();
         }
-        map.put("numProduct",num);
-        map.put("totalPrice",totalPrice);
-        map.put("status","Đang chờ xác nhận");
+        map.put("numProduct", num);
+        map.put("totalPrice", totalPrice);
+        map.put("status", "Đang chờ xác nhận");
 
         // Add thông tin order
         String odrKey = myRef.push().getKey();
@@ -149,24 +175,22 @@ public class CartFragment extends Fragment {
                 List<DetailOrder> listDetailOrder = makeDetailOrder(odrKey);
 
                 // Add thông tin detail order
-                for (DetailOrder detailOrder : listDetailOrder){
-
+                for (DetailOrder detailOrder : listDetailOrder) {
                     myRef.child(odrKey).child("detail").child(myRef.push().getKey())
                             .setValue(detailOrder).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(getContext(),"Đã đăng ký đơn hàng",Toast.LENGTH_SHORT).show();
-                            listCartProduct.clear();
-                            setVisibilityEmptyCart();
-                        }
-                    });
-
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(getContext(), "Đã đăng ký đơn hàng", Toast.LENGTH_SHORT).show();
+                                    listCartProduct.clear();
+                                    setVisibilityEmptyCart();
+                                }
+                            });
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(),"Đăng ký đơn hàng thất bại",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Đăng ký đơn hàng thất bại", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -197,18 +221,46 @@ public class CartFragment extends Fragment {
     }
 
     //    lấy ra các sản phầm vừa thêm vào giỏ hàng để thêm vào danh sách hàng sau khi đã bấm đặt hàng
-    private List<DetailOrder> makeDetailOrder( String odrNo){
+    private List<DetailOrder> makeDetailOrder(String odrNo) {
         List<DetailOrder> listDetailOrder = new ArrayList<>();
-        for (Product product : home.getListCartProduct()){
+
+        for (Product product : home.getListCartProduct()) {
             DetailOrder detailOrder = new DetailOrder();
+
+            if (odrNo == null || odrNo.isEmpty()) {
+                Toast.makeText(getActivity(), "Số đơn hàng không hợp lệ", Toast.LENGTH_SHORT).show();
+                return listDetailOrder;
+            }
             detailOrder.setOrderNo(odrNo);
+
+            if (product.getProductName() == null || product.getProductName().isEmpty()) {
+                Toast.makeText(getActivity(), "Tên sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
+                return listDetailOrder;
+            }
             detailOrder.setProductName(product.getProductName());
+
+            if (product.getProductPrice() < 0) {
+                Toast.makeText(getActivity(), "Giá sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
+                return listDetailOrder;
+            }
             detailOrder.setProductPrice(product.getProductPrice());
+
+            if (product.getUrlImg() == null || product.getUrlImg().isEmpty()) {
+                Toast.makeText(getActivity(), "URL hình ảnh không hợp lệ", Toast.LENGTH_SHORT).show();
+                return listDetailOrder;
+            }
             detailOrder.setUrlImg(product.getUrlImg());
+
+            if (product.getNumProduct() < 0) {
+                Toast.makeText(getActivity(), "Số lượng sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
+                return listDetailOrder;
+            }
             detailOrder.setNumProduct(product.getNumProduct());
+
             detailOrder.setStatus("Đang chờ xác nhận");
             listDetailOrder.add(detailOrder);
         }
+
         return listDetailOrder;
     }
 
