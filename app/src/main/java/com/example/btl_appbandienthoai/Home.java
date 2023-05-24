@@ -1,23 +1,25 @@
 package com.example.btl_appbandienthoai;
 
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.widget.AdapterView;
-
-import com.example.btl_appbandienthoai.Class.Order;
-import com.example.btl_appbandienthoai.Class.Product;
-import com.example.btl_appbandienthoai.Fragment.CartFragment;
-import com.example.btl_appbandienthoai.Fragment.DetailProductFragment;
-import com.example.btl_appbandienthoai.Fragment.HistoryFragment;
-import com.example.btl_appbandienthoai.Fragment.OrderInfoFragment;
-import com.example.btl_appbandienthoai.Fragment.ProductFragment;
+import com.example.btl_appbandienthoai.model.Order;
+import com.example.btl_appbandienthoai.model.Product;
+import com.example.btl_appbandienthoai.fragment.CartFragment;
+import com.example.btl_appbandienthoai.fragment.DetailProductFragment;
+import com.example.btl_appbandienthoai.fragment.HistoryFragment;
+import com.example.btl_appbandienthoai.fragment.OrderInfoFragment;
+import com.example.btl_appbandienthoai.fragment.ProductFragment;
+import com.example.btl_appbandienthoai.login.SessionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +33,12 @@ public class Home extends AppCompatActivity {
     private List<Product> listCartProduct;
     private BottomNavigationView bottomNavigationView;
     private FragmentTransaction fragmentTransaction;
+    private SessionManager session;
+
+    private FirebaseUser user;
+    private FirebaseAuth auth;
+    public static final String TAG = "Home";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +58,7 @@ public class Home extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
 
                     case R.id.menu_item_list:
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -85,17 +93,19 @@ public class Home extends AppCompatActivity {
     }
 
     // Mở Fragment DetailProduct
-    public void toDetailProductFragment(Product product){
+    public void toDetailProductFragment(Product product) {
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.contet_frame, new DetailProductFragment(product,listCartProduct));
+        fragmentTransaction.replace(R.id.contet_frame, new DetailProductFragment(product, listCartProduct));
         fragmentTransaction.commit();
     }
+
     // Thêm sản phẩm đã chọn vào giỏ hàng
-    public void addToListCartProdct(Product product){
+    public void addToListCartProdct(Product product) {
         listCartProduct.add(product);
     }
+
     // Set lại số lượng của sản phẩm khi mua nhiều
-    public void setCountForProduct(int possion, int countProduct){
+    public void setCountForProduct(int possion, int countProduct) {
         listCartProduct.get(possion).setNumProduct(countProduct);
     }
 
@@ -105,14 +115,14 @@ public class Home extends AppCompatActivity {
     }
 
     // Mở Fragment OrderInfo
-    public void toOrderInfoFragment(Order orderInfo){
+    public void toOrderInfoFragment(Order orderInfo) {
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.contet_frame, new OrderInfoFragment(orderInfo));
         fragmentTransaction.addToBackStack(OrderInfoFragment.TAG);
         fragmentTransaction.commit();
     }
 
-    private List<Product> createDataProduct(){
+    private List<Product> createDataProduct() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("DbProduct");
 
@@ -261,8 +271,8 @@ public class Home extends AppCompatActivity {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.i("Snapshot",snapshot.toString());
-                for (DataSnapshot data : snapshot.getChildren()){
+                Log.i("Snapshot", snapshot.toString());
+                for (DataSnapshot data : snapshot.getChildren()) {
                     Product product = data.getValue(Product.class);
                     product.setId(data.getKey());
                     mListProduct.add(product);
@@ -271,7 +281,7 @@ public class Home extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("MYTAG","onCancelled"+ error.toString());
+                Log.d("MYTAG", "onCancelled" + error.toString());
             }
         });
         return mListProduct;
