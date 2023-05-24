@@ -18,8 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.btl_appbandienthoai.Home;
 import com.example.btl_appbandienthoai.R;
+import com.example.btl_appbandienthoai.login.model.UserDetails;
+import com.example.btl_appbandienthoai.model.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,7 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth auth;
-    private SessionManager session;
+    //    private SessionManager session;
     private EditText loginEmail, loginPassword;
     private TextView signupRedirectText;
     private Button loginButton;
@@ -42,21 +45,21 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // User is already logged in, start MainActivity
-            startActivity(new Intent(LoginActivity.this, Home.class));
-            finish();
-            return;
-        }
+//        if (user != null) {
+//            // User is already logged in, start MainActivity
+//            startActivity(new Intent(LoginActivity.this, Home.class));
+//            finish();
+//            return;
+//        }
         setContentView(R.layout.activity_login);
-        session = new SessionManager(getApplicationContext());
-
+//        session = new SessionManager(getApplicationContext());
+        Log.i("----------------------------Login:", "chay");
         // Check if the user is already logged in
-        if (session.isLoggedIn()) {
-            startActivity(new Intent(LoginActivity.this, Home.class));
-            finish();
-            return;
-        }
+//        if (session.isLoggedIn()) {
+//            startActivity(new Intent(LoginActivity.this, Home.class));
+//            finish();
+//            return;
+//        }
 
         auth = FirebaseAuth.getInstance();
         loginEmail = findViewById(R.id.login_email);
@@ -91,17 +94,17 @@ public class LoginActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         String userEmail = emailBox.getText().toString();
                         if (TextUtils.isEmpty(userEmail) && !Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()) {
-                            Toast.makeText(LoginActivity.this, "Enter your registered email", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Nhập email đã đăng ký", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         auth.sendPasswordResetEmail(userEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this, "Check your email", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, "Kiểm tra email", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                 } else {
-                                    Toast.makeText(LoginActivity.this, "Unable to send failed", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, "Gửi mail thất bại", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -131,40 +134,57 @@ public class LoginActivity extends AppCompatActivity {
     public void checkUser() {
         String userUsername = loginEmail.getText().toString().trim();
         String userPassword = loginPassword.getText().toString().trim();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("profile");
-        Query checkUserDatabase = reference.orderByChild("name").equalTo(userUsername);
-        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    loginEmail.setError(null);
-                    String passwordFromDB = snapshot.child(userUsername).child("password").getValue(String.class);
-                    if (passwordFromDB.equals(userPassword)) {
-                        loginEmail.setError(null);
-                        String nameFromDB = snapshot.child(userUsername).child("name").getValue(String.class);
-                        String contactFromDB = snapshot.child(userUsername).child("contact").getValue(String.class);
-                        String emailFromDB = snapshot.child(userUsername).child("email").getValue(String.class);
-                        String BirthDateFromDB = snapshot.child(userUsername).child("birthdate").getValue(String.class);
-                        Intent intent = new Intent(LoginActivity.this, Home.class);
-                        intent.putExtra("name", nameFromDB);
-                        intent.putExtra("email", emailFromDB);
-                        intent.putExtra("birthdate", BirthDateFromDB);
-                        intent.putExtra("contact", contactFromDB);
-                        startActivity(intent);
-                    } else {
-                        loginPassword.setError("Invalid Credentials");
-                        loginPassword.requestFocus();
-                    }
-                } else {
-                    loginEmail.setError("User does not exist");
-                    loginEmail.requestFocus();
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
+        auth.signInWithEmailAndPassword(userUsername, userPassword)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("Login", "signInWithEmail:success");
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("profile");
+                            reference.orderByChild("email").startAt(userUsername)
+                                    .endAt(userUsername + "\uf8ff")
+                                    .addValueEventListener(new ValueEventListener() {
+                                        UserDetails userDetails;
+
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            Log.i("Snapshot", snapshot.toString());
+                                            for (DataSnapshot data : snapshot.getChildren()) {
+                                                Log.i("data", data.getKey());
+                                                userDetails = data.getValue(UserDetails.class);
+                                                break;
+                                            }
+                                            Log.i("----------------------Login",userDetails.getName());
+                                            String nameFromDB = userDetails.getName();
+                                            String contactFromDB = userDetails.getContact();
+                                            String emailFromDB = userDetails.getEmail();
+                                            String BirthDateFromDB = userDetails.getBirthdate();
+                                            Intent intent = new Intent(LoginActivity.this, Home.class);
+                                            intent.putExtra("name", nameFromDB);
+                                            intent.putExtra("email", emailFromDB);
+                                            intent.putExtra("birthdate", BirthDateFromDB);
+                                            intent.putExtra("contact", contactFromDB);
+                                            Toast.makeText(LoginActivity.this, "Đăng nhập thành công",
+                                                    Toast.LENGTH_SHORT).show();
+                                            startActivity(intent);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Toast.makeText(LoginActivity.this, "Không tìm thấy tài khoản", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("Login", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Đăng nhập thất bại",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
     }
 }
 

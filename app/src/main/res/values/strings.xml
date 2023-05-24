@@ -5,4 +5,5 @@
     <string name="tab_product">Sản Phẩm</string>
     <string name="tab_cart">Giỏ Hàng</string>
     <string name="tab_history">Lịch Sử Mua Hàng</string>
+    <string name="tab_user">Lịch Sử Mua Hàng</string>
 </resources>

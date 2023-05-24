@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -49,25 +50,28 @@ public class SignUpActivity extends AppCompatActivity {
                 String pass = signupPassword.getText().toString();
 
                 User hc = new User(user, pass);
-                reference.child("user").setValue(hc);
+                double randomDouble = Math.random();
+                randomDouble = randomDouble * 100 + 1;
+                int randomInt = (int) randomDouble;
+                reference.child("user"+randomInt).setValue(hc);
 
                 if (user.isEmpty()) {
-                    signupEmail.setError("Email cannot be empty");
+                    signupEmail.setError("Email không được rỗng");
                 }
                 if (pass.isEmpty()) {
-                    signupPassword.setError("Password cannot be empty");
+                    signupPassword.setError("Password không được rỗng");
                 } else {
                     auth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(SignUpActivity.this, "Signup successful", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUpActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(SignUpActivity.this, CreateProfile.class);
                                 i.putExtra("email", user);
                                 i.putExtra("password", pass);
                                 startActivity(i);
                             } else {
-                                Toast.makeText(SignUpActivity.this, "Signup failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUpActivity.this, "Đăng ký thất bại" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

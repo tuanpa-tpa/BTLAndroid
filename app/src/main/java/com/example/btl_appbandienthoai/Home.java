@@ -8,18 +8,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.btl_appbandienthoai.model.Order;
-import com.example.btl_appbandienthoai.model.Product;
 import com.example.btl_appbandienthoai.fragment.CartFragment;
 import com.example.btl_appbandienthoai.fragment.DetailProductFragment;
 import com.example.btl_appbandienthoai.fragment.HistoryFragment;
 import com.example.btl_appbandienthoai.fragment.OrderInfoFragment;
 import com.example.btl_appbandienthoai.fragment.ProductFragment;
-import com.example.btl_appbandienthoai.login.SessionManager;
+import com.example.btl_appbandienthoai.model.Order;
+import com.example.btl_appbandienthoai.model.Product;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,10 +30,8 @@ public class Home extends AppCompatActivity {
     private List<Product> listCartProduct;
     private BottomNavigationView bottomNavigationView;
     private FragmentTransaction fragmentTransaction;
-    private SessionManager session;
+//    private SessionManager session;
 
-    private FirebaseUser user;
-    private FirebaseAuth auth;
     public static final String TAG = "Home";
 
     @Override

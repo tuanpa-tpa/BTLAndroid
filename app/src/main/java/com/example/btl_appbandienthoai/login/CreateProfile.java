@@ -55,7 +55,7 @@ public class CreateProfile extends AppCompatActivity {
 
                 UserDetails helperClass = new UserDetails(name, email, contactn, Birthdate, password);
                 reference.child(name).setValue(helperClass);
-                Toast.makeText(com.example.btl_appbandienthoai.login.CreateProfile.this, "You have signup successfully!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(com.example.btl_appbandienthoai.login.CreateProfile.this, "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
                 Intent in = new Intent(com.example.btl_appbandienthoai.login.CreateProfile.this, LoginActivity.class);
                 startActivity(in);
             }
