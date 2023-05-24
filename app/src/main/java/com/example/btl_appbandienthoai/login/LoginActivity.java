@@ -45,12 +45,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        if (user != null) {
-//            // User is already logged in, start MainActivity
-//            startActivity(new Intent(LoginActivity.this, Home.class));
-//            finish();
-//            return;
-//        }
+        if (user != null) {
+            // User is already logged in, start MainActivity
+            startActivity(new Intent(LoginActivity.this, Home.class));
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_login);
 //        session = new SessionManager(getApplicationContext());
         Log.i("----------------------------Login:", "chay");

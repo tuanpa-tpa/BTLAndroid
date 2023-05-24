@@ -13,6 +13,7 @@ import com.example.btl_appbandienthoai.fragment.DetailProductFragment;
 import com.example.btl_appbandienthoai.fragment.HistoryFragment;
 import com.example.btl_appbandienthoai.fragment.OrderInfoFragment;
 import com.example.btl_appbandienthoai.fragment.ProductFragment;
+import com.example.btl_appbandienthoai.fragment.UserFragment;
 import com.example.btl_appbandienthoai.model.Order;
 import com.example.btl_appbandienthoai.model.Product;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -68,6 +69,11 @@ public class Home extends AppCompatActivity {
                     case R.id.menu_item_search:
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.contet_frame, new HistoryFragment());
+                        fragmentTransaction.commit();
+                        break;
+                    case R.id.menu_item_user:
+                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.contet_frame, new UserFragment());
                         fragmentTransaction.commit();
                         break;
                 }
