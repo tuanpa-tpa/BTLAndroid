@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/pagebkg"
     tools:context="login.LoginActivity">
 
     <androidx.cardview.widget.CardView

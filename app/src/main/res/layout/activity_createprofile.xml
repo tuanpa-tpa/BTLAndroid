@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/pagebkg"
-    tools:context="login.Createprofile">
+    tools:context="login.CreateProfile">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
