@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="10dp"
+    android:layout_marginRight="10dp"
+    app:cardCornerRadius="15dp">
+
+    <RelativeLayout
+        android:id="@+id/rl_search_history"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_search_hitory_product_text_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Mã Đặt Hàng :"
+            android:textColor="@color/text_color"
+            android:textSize="10sp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/tv_search_hitory_product_orderNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_search_hitory_product_text_order"
+            android:text="12341aaa"
+            android:layout_marginLeft="3dp"
+            android:textColor="@color/teal_200"
+            android:textSize="10sp">
+        </TextView>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/tv_search_hitory_product_text_order"
+            android:background="@color/divider">
+        </View>
+
+
+        <TextView
+            android:id="@+id/tv_search_hitory_product_name"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="-60dp"
+            android:layout_toRightOf="@+id/tv_search_hitory_product_text_order"
+            android:text="Tuan"
+            android:textColor="@color/text_color"
+            android:textSize="15sp"></TextView>
+
+
+
+        <TextView
+            android:id="@+id/tv_search_hitory_product_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_toRightOf="@+id/tv_search_hitory_product_name"
+            android:gravity="right"
+            android:text="Đang Chờ Xác Nhận"
+            android:textColor="@color/teal_700"
+            android:textSize="10sp"></TextView>
+
+        <TextView
+            android:id="@+id/tv_search_hitory_product_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="-60dp"
+            android:layout_toRightOf="@+id/tv_search_hitory_product_text_order"
+            android:layout_below="@+id/tv_search_hitory_product_name"
+            android:text="Ngày Đặt: "
+            android:textSize="15sp"
+            android:textColor="@color/text_color">
+        </TextView>
+
+        <TextView
+            android:id="@+id/tv_search_hitory_product_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/tv_search_hitory_product_text"
+            android:layout_below="@+id/tv_search_hitory_product_name"
+            android:text="null"
+            android:textSize="15sp"
+            android:textColor="@color/text_color">
+        </TextView>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

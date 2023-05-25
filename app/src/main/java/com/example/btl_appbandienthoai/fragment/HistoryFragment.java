@@ -20,6 +20,8 @@ import com.example.btl_appbandienthoai.model.DetailOrder;
 import com.example.btl_appbandienthoai.model.Order;
 import com.example.btl_appbandienthoai.Home;
 import com.example.btl_appbandienthoai.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,7 +29,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,6 +81,7 @@ public class HistoryFragment extends Fragment {
 
         rcvHitorySearch = mView.findViewById(R.id.rcv_hitory_search);
         btnHistorySearch = mView.findViewById(R.id.btn_history_search);
+        findOrder();
         btnHistorySearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,7 +92,8 @@ public class HistoryFragment extends Fragment {
 
     // Lấy thông tin order
     private void findOrder(){
-
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String email = user.getEmail();
         // Clear các list dữ liệu khi tìm kiếm
         listOrder.clear();
         listDetailOrder.clear();
@@ -95,18 +101,18 @@ public class HistoryFragment extends Fragment {
         // Kết nối tới data base
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("DbOrder");
-        String phone = edtHistoryPhone.getText().toString();
-        String phoneRegex = "^0\\d{9}$";
-        Pattern phonePattern = Pattern.compile(phoneRegex);
-        Matcher phoneMatcher = phonePattern.matcher(phone);
-
-        if (phone.isEmpty() || !phoneMatcher.matches()) {
-            Toast.makeText(getContext(), "Số điện thoại nhập không hợp lệ", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        String phone = edtHistoryPhone.getText().toString();
+//        String phoneRegex = "^0\\d{9}$";
+//        Pattern phonePattern = Pattern.compile(phoneRegex);
+//        Matcher phoneMatcher = phonePattern.matcher(phone);
+//
+//        if (phone.isEmpty() || !phoneMatcher.matches()) {
+//            Toast.makeText(getContext(), "Số điện thoại nhập không hợp lệ", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
 
         // Lấy thông tin order
-        myRef.orderByChild("custPhone").equalTo(phone)
+        myRef.orderByChild("email").equalTo(email)
                 .addValueEventListener(new ValueEventListener() {
 
                     @Override
@@ -143,7 +149,8 @@ public class HistoryFragment extends Fragment {
         if (listOrder.size() > 0){
             for (int i = 0; i<listOrder.size(); i++){
                 Order order = listOrder.get(i);
-                myRef.child(order.getOrderNo()).child("detail").addValueEventListener(new ValueEventListener() {
+                myRef.child(order.getOrderNo()).child("detail").orderByChild("orderNo").equalTo(order.getOrderNo())
+                        .addValueEventListener(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -170,6 +177,8 @@ public class HistoryFragment extends Fragment {
 
     // set data cho HistoryProductAdapter
     private void setDataHistoryProductAdapter(){
+        Log.i("-------------------data", listOrder.size()+"");
+        Log.i("-------------------data -de", listDetailOrder.size()+"");
         historyProductAdapter.setData(listDetailOrder,listOrder,home);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(home,RecyclerView.VERTICAL,false);
         rcvHitorySearch.setLayoutManager(linearLayoutManager);

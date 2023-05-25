@@ -26,6 +26,8 @@ import com.example.btl_appbandienthoai.Home;
 import com.example.btl_appbandienthoai.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -148,6 +150,10 @@ public class CartFragment extends Fragment {
             return;
         }
 
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String email = user.getEmail();
+
         // Tạo map chứa thông tin đơn hàng
         Map<String, Object> map = new HashMap<>();
 
@@ -164,11 +170,16 @@ public class CartFragment extends Fragment {
         }
         map.put("numProduct", num);
         map.put("totalPrice", totalPrice);
+        map.put("email",email);
         map.put("status", "Đang chờ xác nhận");
 
         // Add thông tin order
-        String odrKey = myRef.push().getKey();
-        Log.i("oderKey", odrKey);
+//        String odrKey = myRef.push().getKey();
+        double randomDouble = Math.random();
+        randomDouble = randomDouble * 100000 + 1;
+        int randomInt = (int) randomDouble;
+        String odrKey = randomInt+"";
+//        Log.i("oderKey", odrKey);
         myRef.child(odrKey).setValue(map).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -176,7 +187,7 @@ public class CartFragment extends Fragment {
 
                 // Add thông tin detail order
                 for (DetailOrder detailOrder : listDetailOrder) {
-                    myRef.child(odrKey).child("detail").child(myRef.push().getKey())
+                    myRef.child(odrKey).child("detail").child(detailOrder.getProductName())
                             .setValue(detailOrder).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

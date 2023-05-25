@@ -14,7 +14,7 @@ public class Order {
     private int numProduct;
     private int totalPrice;
     private List<DetailOrder> listDetailOrder;
-
+    private List<Order> listOder;
     public Order(){
     }
 
@@ -101,10 +101,11 @@ public class Order {
         this.listDetailOrder = listDetailOrder;
     }
 
-    public void addToListDetailOrder(DetailOrder detailOrder){
-        if (this.listDetailOrder == null){
-            this.listDetailOrder = new ArrayList<>();
-        }
-        this.listDetailOrder.add(detailOrder);
+    public List<Order> getListOder() {
+        return listOder;
+    }
+
+    public void setListOder(List<Order> listOder) {
+        this.listOder = listOder;
     }
 }

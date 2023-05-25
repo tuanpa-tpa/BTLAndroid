@@ -1,15 +1,14 @@
 package com.example.btl_appbandienthoai.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.btl_appbandienthoai.model.DetailOrder;
 import com.example.btl_appbandienthoai.model.Order;
 import com.example.btl_appbandienthoai.Home;
@@ -26,72 +25,62 @@ public class HistoryProductAdapter extends RecyclerView.Adapter<HistoryProductAd
     private Order orderInfo;
     private Home home;
 
-    public void setData(List<DetailOrder> listDetailOrder, List<Order> listOrder,Home home) {
+    public void setData(List<DetailOrder> listDetailOrder, List<Order> listOrder, Home home) {
         this.listDetailOrder = new ArrayList<>();
         this.listDetailOrder = listDetailOrder;
         this.listOrder = listOrder;
         this.home = home;
         notifyDataSetChanged();
     }
+
     @NonNull
     @Override
     public HistoryProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_history,parent,false);
-        return new  HistoryProductViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_history, parent, false);
+        return new HistoryProductViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull HistoryProductViewHolder holder, int position) {
-        DetailOrder detailOrder = listDetailOrder.get(position);
-        if(detailOrder == null){
+//        DetailOrder detailOrder = listDetailOrder.get(position);
+        Order order = listOrder.get(position);
+        if (order == null) {
             return;
-        }else{
-            Glide.with(holder.imgHitoryProduct.getContext()).load(detailOrder.getUrlImg()).into(holder.imgHitoryProduct);
-            holder.tvHitoryProductName.setText(detailOrder.getProductName());
-            holder.tvHitoryProductNum.setText(String.valueOf(detailOrder.getNumProduct()));
-            holder.tvHitoryProductPrice.setText(formatPrice.format(detailOrder.getProductPrice()) + "VNĐ");
-            holder.tvHitoryProductStatus.setText(detailOrder.getStatus());
-            holder.tvHitoryProductOrderNo.setText(detailOrder.getOrderNo().toUpperCase());
-        }
-        for (Order order : listOrder) {
-            if(order.getOrderNo().equals(detailOrder.getOrderNo())){
-                holder.tvHitoryProductDate.setText(order.getDateOrder());
-                break;
-            }
+        } else {
+
+            holder.tvHitoryProductDate.setText(order.getDateOrder());
+            holder.tvHitoryName.setText("Người nhận: " + order.getCustName());
+            holder.tvHitoryProductStatus.setText(order.getStatus());
+            holder.tvHitoryProductOrderNo.setText(order.getOrderNo().toUpperCase());
         }
 
         holder.tvHitoryProductOrderNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (Order order:listOrder) {
-                    if(order.getOrderNo().equals(detailOrder.getOrderNo())){
-                        orderInfo = order;
-                        break;
+                orderInfo = order;
+                List<DetailOrder> list = new ArrayList<>();
+                for (DetailOrder itemDetailOrder : listDetailOrder) {
+                    if (order.getOrderNo().equalsIgnoreCase(itemDetailOrder.getOrderNo())) {
+                        list.add(itemDetailOrder);
                     }
                 }
-                for (DetailOrder itemDetailOrder : listDetailOrder){
-                    if(detailOrder.getOrderNo().equals(itemDetailOrder.getOrderNo())){
-                        orderInfo.addToListDetailOrder(itemDetailOrder);
-                    }
-                }
+                orderInfo.setListDetailOrder(list);
+                orderInfo.setListOder(listOrder);
                 home.toOrderInfoFragment(orderInfo);
             }
         });
-        holder.imgHitoryProduct.setOnClickListener(new View.OnClickListener() {
+        holder.tvHitoryName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Xử lý khi người dùng click vào hình ảnh
-                for (Order order : listOrder) {
-                    if (order.getOrderNo().equals(detailOrder.getOrderNo())) {
-                        orderInfo = order;
-                        break;
-                    }
-                }
+                orderInfo = order;
+                List<DetailOrder> list = new ArrayList<>();
                 for (DetailOrder itemDetailOrder : listDetailOrder) {
-                    if (detailOrder.getOrderNo().equals(itemDetailOrder.getOrderNo())) {
-                        orderInfo.addToListDetailOrder(itemDetailOrder);
+                    if (order.getOrderNo().equalsIgnoreCase(itemDetailOrder.getOrderNo())) {
+                        list.add(itemDetailOrder);
                     }
                 }
+                orderInfo.setListDetailOrder(list);
+                orderInfo.setListOder(listOrder);
                 home.toOrderInfoFragment(orderInfo);
             }
         });
@@ -99,27 +88,22 @@ public class HistoryProductAdapter extends RecyclerView.Adapter<HistoryProductAd
 
     @Override
     public int getItemCount() {
-        if(listDetailOrder.size() != 0){
-            return listDetailOrder.size();
-        }else{
+        if (listOrder.size() != 0) {
+            return listOrder.size();
+        } else {
             return 0;
         }
     }
 
-    public class HistoryProductViewHolder extends RecyclerView.ViewHolder{
-        ImageView imgHitoryProduct;
-        TextView tvHitoryProductName,tvHitoryProductNum,tvHitoryProductPrice,tvHitoryProductDate
-                ,tvHitoryProductStatus,tvHitoryProductOrderNo;
+    public class HistoryProductViewHolder extends RecyclerView.ViewHolder {
+        TextView tvHitoryName, tvHitoryProductDate, tvHitoryProductStatus, tvHitoryProductOrderNo;
 
         public HistoryProductViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgHitoryProduct = itemView.findViewById(R.id.img_hitory_product);
-            tvHitoryProductName = itemView.findViewById(R.id.tv_hitory_product_name);
-            tvHitoryProductNum = itemView.findViewById(R.id.tv_hitory_product_num);
-            tvHitoryProductPrice = itemView.findViewById(R.id.tv_hitory_product_price);
-            tvHitoryProductDate = itemView.findViewById(R.id.tv_hitory_product_date);
-            tvHitoryProductStatus = itemView.findViewById(R.id.tv_hitory_product_status);
-            tvHitoryProductOrderNo = itemView.findViewById(R.id.tv_hitory_product_orderNo);
+            tvHitoryName = itemView.findViewById(R.id.tv_search_hitory_product_name);
+            tvHitoryProductDate = itemView.findViewById(R.id.tv_search_hitory_product_date);
+            tvHitoryProductStatus = itemView.findViewById(R.id.tv_search_hitory_product_status);
+            tvHitoryProductOrderNo = itemView.findViewById(R.id.tv_search_hitory_product_orderNo);
         }
     }
 }
