@@ -27,48 +27,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/img_hitory_bg"
-                android:text="Tìm Kiếm Thông Tin Mua Hàng"
+                android:text="Lịch sử mua hàng"
                 android:textColor="@color/text_color"
                 android:textSize="15sp"
                 android:layout_centerHorizontal="true">
             </TextView>
 
-            <EditText
-                android:id="@+id/edt_history_phone"
-                android:layout_width="350dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_hitory_text"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/custom_edit_text"
-                android:layout_marginTop="10dp"
-                android:padding="10dp"
-                android:hint="Nhập Số Điện Thoại Mua Hàng"
-                android:inputType="phone"
-                android:fontFamily="sans-serif-light"
-                android:textSize="15sp"
-                android:drawableLeft="@drawable/ic_baseline_phone_iphone_24"
-                android:drawablePadding="10dp">
-            </EditText>
-
-            <Button
-                android:id="@+id/btn_history_search"
-                android:layout_width="100dp"
-                android:layout_height="35dp"
-                android:layout_below="@+id/edt_history_phone"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
-                android:text="Tìm Kiếm"
-                android:textSize="10sp"
-                android:background="@drawable/custom_button"
-                android:backgroundTint="@null"
-                app:backgroundTint="@null">
-            </Button>
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcv_hitory_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btn_history_search"
+                android:layout_below="@+id/tv_hitory_text"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp">
 

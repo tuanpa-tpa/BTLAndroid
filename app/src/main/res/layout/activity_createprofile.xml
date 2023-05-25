@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="@drawable/pagebkg"
-    tools:context=".Createprofile">
+    tools:context="login.Createprofile">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -28,10 +28,10 @@
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Create Profile"
+                android:text="Cập nhật thông tin"
                 android:textAlignment="center"
                 android:textColor="@color/lavender"
-                android:textSize="36sp"
+                android:textSize="30sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -42,8 +42,8 @@
                 android:background="@drawable/custom_edittext"
                 android:drawableLeft="@drawable/baseline_person_24"
                 android:drawablePadding="8dp"
-                android:hint="Full name"
-                android:padding="8dp"
+                android:hint="Họ và tên"
+                android:padding="15dp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -54,9 +54,8 @@
                 android:background="@drawable/custom_edittext"
                 android:drawableLeft="@drawable/baseline_lock_24"
                 android:drawablePadding="8dp"
-
                 android:hint="Email"
-                android:padding="8dp"
+                android:padding="15dp"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:passwordToggleEnabled="true" />
@@ -69,8 +68,8 @@
                 android:background="@drawable/custom_edittext"
                 android:drawableLeft="@drawable/baseline_lock_24"
                 android:drawablePadding="8dp"
-                android:hint="Contact number"
-                android:padding="8dp"
+                android:hint="Số điện thoại"
+                android:padding="15dp"
                 android:textColor="@color/black"
                 app:passwordToggleEnabled="true" />
 
@@ -82,8 +81,8 @@
                 android:background="@drawable/custom_edittext"
                 android:drawableLeft="@drawable/baseline_lock_24"
                 android:drawablePadding="8dp"
-                android:hint="Birth Date (dd-mm-yyyy)"
-                android:padding="8dp"
+                android:hint="Sinh nhật (dd-mm-yyyy)"
+                android:padding="15dp"
                 android:textColor="@color/black"
                 app:passwordToggleEnabled="true" />
 
@@ -95,9 +94,9 @@
                 android:background="@drawable/custom_edittext"
                 android:drawableLeft="@drawable/baseline_lock_24"
                 android:drawablePadding="8dp"
-
-                android:hint="Password"
-                android:padding="8dp"
+                android:hint="Mật khẩu"
+                android:inputType="textPassword"
+                android:padding="15dp"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:passwordToggleEnabled="true" />
@@ -108,7 +107,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="30dp"
                 android:backgroundTint="@color/lavender"
-                android:text="Create Profile"
+                android:text="Cập nhật"
                 android:textSize="18sp"
                 app:cornerRadius="20dp" />
 

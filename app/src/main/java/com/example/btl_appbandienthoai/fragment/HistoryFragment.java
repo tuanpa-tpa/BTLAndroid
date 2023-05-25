@@ -42,8 +42,6 @@ public class HistoryFragment extends Fragment {
     private List<DetailOrder> listDetailOrder;
 
     private View mView;
-    private EditText edtHistoryPhone;
-    private Button btnHistorySearch;
     private RecyclerView rcvHitorySearch;
 
     private HistoryProductAdapter historyProductAdapter;
@@ -63,10 +61,6 @@ public class HistoryFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        // Khi quay lại từ fragment OrderInfo sẽ thực hiện tìm kiếm lại
-        if (!edtHistoryPhone.getText().toString().trim().isEmpty()){
-            findOrder();
-        }
     }
     // Khởi tạo các item
     private void initItem(){
@@ -76,18 +70,8 @@ public class HistoryFragment extends Fragment {
         home = (Home) getActivity();
 
         historyProductAdapter = new HistoryProductAdapter();
-
-        edtHistoryPhone = mView.findViewById(R.id.edt_history_phone);
-
         rcvHitorySearch = mView.findViewById(R.id.rcv_hitory_search);
-        btnHistorySearch = mView.findViewById(R.id.btn_history_search);
         findOrder();
-        btnHistorySearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                findOrder();
-            }
-        });
     }
 
     // Lấy thông tin order
