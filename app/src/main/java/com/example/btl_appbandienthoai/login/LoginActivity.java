@@ -134,57 +134,61 @@ public class LoginActivity extends AppCompatActivity {
     public void checkUser() {
         String userUsername = loginEmail.getText().toString().trim();
         String userPassword = loginPassword.getText().toString().trim();
+        if (userUsername.isEmpty() || userPassword.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(userUsername).matches()) {
+            Toast.makeText(getApplicationContext(), "Vui lòng nhập địa chỉ email hợp lệ", Toast.LENGTH_SHORT).show();
+        } else {
+            auth.signInWithEmailAndPassword(userUsername, userPassword)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d("Login", "signInWithEmail:success");
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("profile");
+                                reference.orderByChild("email").startAt(userUsername)
+                                        .endAt(userUsername + "\uf8ff")
+                                        .addValueEventListener(new ValueEventListener() {
+                                            UserDetails userDetails;
 
-        auth.signInWithEmailAndPassword(userUsername, userPassword)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("Login", "signInWithEmail:success");
-                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("profile");
-                            reference.orderByChild("email").startAt(userUsername)
-                                    .endAt(userUsername + "\uf8ff")
-                                    .addValueEventListener(new ValueEventListener() {
-                                        UserDetails userDetails;
-
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            Log.i("Snapshot", snapshot.toString());
-                                            for (DataSnapshot data : snapshot.getChildren()) {
-                                                Log.i("data", data.getKey());
-                                                userDetails = data.getValue(UserDetails.class);
-                                                break;
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                Log.i("Snapshot", snapshot.toString());
+                                                for (DataSnapshot data : snapshot.getChildren()) {
+                                                    Log.i("data", data.getKey());
+                                                    userDetails = data.getValue(UserDetails.class);
+                                                    break;
+                                                }
+                                                Log.i("----------------------Login",userDetails.getName());
+                                                String nameFromDB = userDetails.getName();
+                                                String contactFromDB = userDetails.getContact();
+                                                String emailFromDB = userDetails.getEmail();
+                                                String BirthDateFromDB = userDetails.getBirthdate();
+                                                Intent intent = new Intent(LoginActivity.this, Home.class);
+                                                intent.putExtra("name", nameFromDB);
+                                                intent.putExtra("email", emailFromDB);
+                                                intent.putExtra("birthdate", BirthDateFromDB);
+                                                intent.putExtra("contact", contactFromDB);
+                                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công",
+                                                        Toast.LENGTH_SHORT).show();
+                                                startActivity(intent);
                                             }
-                                            Log.i("----------------------Login",userDetails.getName());
-                                            String nameFromDB = userDetails.getName();
-                                            String contactFromDB = userDetails.getContact();
-                                            String emailFromDB = userDetails.getEmail();
-                                            String BirthDateFromDB = userDetails.getBirthdate();
-                                            Intent intent = new Intent(LoginActivity.this, Home.class);
-                                            intent.putExtra("name", nameFromDB);
-                                            intent.putExtra("email", emailFromDB);
-                                            intent.putExtra("birthdate", BirthDateFromDB);
-                                            intent.putExtra("contact", contactFromDB);
-                                            Toast.makeText(LoginActivity.this, "Đăng nhập thành công",
-                                                    Toast.LENGTH_SHORT).show();
-                                            startActivity(intent);
-                                        }
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-                                            Toast.makeText(LoginActivity.this, "Không tìm thấy tài khoản", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("Login", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Đăng nhập thất bại",
-                                    Toast.LENGTH_SHORT).show();
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                Toast.makeText(LoginActivity.this, "Không tìm thấy tài khoản", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w("Login", "signInWithEmail:failure", task.getException());
+                                Toast.makeText(LoginActivity.this, "Đăng nhập thất bại",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
-
+                    });
+        }
     }
 }
 

@@ -17,6 +17,9 @@ import com.example.btl_appbandienthoai.login.model.UserDetails;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class CreateProfile extends AppCompatActivity {
     ArrayAdapter ad;
     EditText Name, contact, birthdate;
@@ -25,7 +28,6 @@ public class CreateProfile extends AppCompatActivity {
     Button CreateProfile;
     FirebaseDatabase database;
     DatabaseReference reference;
-    String s2[] = {"Female", "Male", "Others"};
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -49,15 +51,25 @@ public class CreateProfile extends AppCompatActivity {
                 database = FirebaseDatabase.getInstance();
                 reference = database.getReference("profile");
                 String name = Name.getText().toString();
-
                 String contactn = contact.getText().toString();
                 String Birthdate = birthdate.getText().toString();
-
-                UserDetails helperClass = new UserDetails(name, email, contactn, Birthdate, password);
-                reference.child(name).setValue(helperClass);
-                Toast.makeText(com.example.btl_appbandienthoai.login.CreateProfile.this, "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
-                Intent in = new Intent(com.example.btl_appbandienthoai.login.CreateProfile.this, LoginActivity.class);
-                startActivity(in);
+                String phoneRegex = "^0\\d{9}$";
+                Pattern phonePattern = Pattern.compile(phoneRegex);
+                Matcher phoneMatcher = phonePattern.matcher(contactn);
+                String pattern = "\\d{2}-\\d{2}-\\d{4}"; // Biểu thức chính quy để kiểm tra định dạng xx-xx-xxxx
+                if (name.isEmpty() || contactn.isEmpty() || Birthdate.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                } else if (!phoneMatcher.matches()) {
+                    Toast.makeText(com.example.btl_appbandienthoai.login.CreateProfile.this, "Số điện thoại nhập không hợp lệ", Toast.LENGTH_SHORT).show();
+                } else if (!Birthdate.matches(pattern)) {
+                    Toast.makeText(getApplicationContext(), "Vui lòng nhập ngày sinh đúng định dạng (xx-xx-xxxx)", Toast.LENGTH_SHORT).show();
+                } else {
+                    UserDetails helperClass = new UserDetails(name, email, contactn, Birthdate, password);
+                    reference.child(name).setValue(helperClass);
+                    Toast.makeText(com.example.btl_appbandienthoai.login.CreateProfile.this, "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+                    Intent in = new Intent(com.example.btl_appbandienthoai.login.CreateProfile.this, LoginActivity.class);
+                    startActivity(in);
+                }
             }
         });
 

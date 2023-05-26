@@ -54,12 +54,12 @@ public class SignUpActivity extends AppCompatActivity {
                 randomDouble = randomDouble * 100 + 1;
                 int randomInt = (int) randomDouble;
                 reference.child("user"+randomInt).setValue(hc);
-
-                if (user.isEmpty()) {
-                    signupEmail.setError("Email không được rỗng");
-                }
-                if (pass.isEmpty()) {
-                    signupPassword.setError("Password không được rỗng");
+                if (user.isEmpty() || pass.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(user).matches()) {
+                    Toast.makeText(getApplicationContext(), "Vui lòng nhập địa chỉ email hợp lệ", Toast.LENGTH_SHORT).show();
+                } else if (pass.length() < 6) {
+                    Toast.makeText(getApplicationContext(), "Mật khẩu phải chứa ít nhất 6 ký tự", Toast.LENGTH_SHORT).show();
                 } else {
                     auth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
